@@ -52,24 +52,103 @@ def pcl_callback(pcl_msg):
 # Exercise-2 TODOs:
 
     # TODO: Convert ROS msg to PCL data
-    
+    pcl_data = ros_to_pcl(pcl_msg)
+
     # TODO: Statistical Outlier Filtering
+    
 
     # TODO: Voxel Grid Downsampling
+    vox = pcl_data.make_voxel_grid_filter()
+
+    LEAF_SIZE = 0.005
+
+    vox.set_leaf_size(LEAF_SIZE, LEAF_SIZE, LEAF_SIZE)
+
+    cloud_filtered = vox.filter()
 
     # TODO: PassThrough Filter
+    # PassThrough filter in the z-axis    
+    passthrough_z = cloud_filtered.make_passthrough_filter()
+    
+    filter_axis_z = 'z'
+    passthrough_z.set_filter_field_name(filter_axis_z)
+    axis_min = 0.60
+    axis_max = 0.9
+    passthrough_z.set_filter_limits(axis_min, axis_max)
+
+    cloud_filtered = passthrough_z.filter()
+
+    # PassThrough Filter in the y axis
+    passthrough_y = cloud_filtered.make_passthrough_filter()
+
+    filter_axis_y = 'y'
+    passthrough_y.set_filter_field_name(filter_axis_y)
+    axis_min_2 = -0.425
+    axis_max_2 = 0.425
+    passthrough_y.set_filter_limits(axis_min_2, axis_max_2)
+
+    cloud_filtered = passthrough_y.filter()
+
 
     # TODO: RANSAC Plane Segmentation
+    max_distance = 0.005
+
+    seg = cloud_filtered.make_segmenter()
+
+    seg.set_model_type(pcl.SACMODEL_PLANE)
+    seg.set_method_type(pcl.SAC_RANSAC)
+
+    seg.set_distance_threshold(max_distance)
+
+    inliers, coefficients = seg.segment()
+
 
     # TODO: Extract inliers and outliers
+    extracted_inliers = cloud_filtered.extract(inliers, negative=False)
+    
+    extracted_outliers = cloud_filtered.extract(inliers, negative=True)
 
     # TODO: Euclidean Clustering
+    white_cloud = XYZRGB_to_XYZ(extracted_outliers) # Apply function to convert XYZRGB to XYZ
+    tree = white_cloud.make_kdtree()
 
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
+    ec = white_cloud.make_EuclideanClusterExtraction()
+    # Set tolerances for distance threshold 
+    # as well as minimum and maximum cluster size (in points)
+    ec.set_ClusterTolerance(0.010)
+    ec.set_MinClusterSize(250)
+    ec.set_MaxClusterSize(3550)
+    # Search the k-d tree for clusters
+    ec.set_SearchMethod(tree)
+    # Extract indices for each of the discovered clusters
+    cluster_indices = ec.Extract()
+    #Assign a color corresponding to each segmented object in scene
+    cluster_color = get_color_list(len(cluster_indices))
+
+    color_cluster_point_list = []
+
+    for j, indices in enumerate(cluster_indices):
+        for i, indice in enumerate(indices):
+            color_cluster_point_list.append([white_cloud[indice][0],
+                                            white_cloud[indice][1],
+                                            white_cloud[indice][2],
+                                             rgb_to_float(cluster_color[j])])
+
+    # Create new cloud containing all clusters, each with unique color
+    cluster_cloud = pcl.PointCloud_PointXYZRGB()
+    cluster_cloud.from_list(color_cluster_point_list)
+
 
     # TODO: Convert PCL data to ROS messages
+    ros_cloud_objects = pcl_to_ros(extracted_outliers)
+    ros_cloud_table = pcl_to_ros(extracted_inliers)
+    ros_cluster_cloud = pcl_to_ros(cluster_cloud)
 
     # TODO: Publish ROS messages
+    pcl_objects_pub.publish(ros_cloud_objects)
+    pcl_table_pub.publish(ros_cloud_table)
+    pcl_cluster_pub.publish(ros_cluster_cloud)
 
 # Exercise-3 TODOs:
 
