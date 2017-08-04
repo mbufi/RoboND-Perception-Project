@@ -63,7 +63,8 @@ encoder = LabelEncoder()
 y_train = encoder.fit_transform(y_train)
 
 # Create classifier
-clf = svm.SVC(kernel='linear')
+# clf = svm.SVC(kernel='linear')
+clf = svm.SVC(kernel='rbf')
 
 # Set up 5-fold cross-validation
 kf = cross_validation.KFold(len(X_train),
@@ -102,7 +103,7 @@ clf.fit(X=X_train, y=y_train)
 model = {'classifier': clf, 'classes': encoder.classes_, 'scaler': X_scaler}
 
 # Save classifier to disk
-pickle.dump(model, open('model_new.sav', 'wb'))
+pickle.dump(model, open('model.sav', 'wb'))
 
 # Plot non-normalized confusion matrix
 plt.figure()

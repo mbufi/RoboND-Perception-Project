@@ -8,8 +8,12 @@ from sensor_stick.training_helper import spawn_model
 from sensor_stick.training_helper import delete_model
 from sensor_stick.training_helper import initial_setup
 from sensor_stick.training_helper import capture_sample
-from sensor_stick.features import compute_color_histograms
-from sensor_stick.features import compute_normal_histograms
+# from sensor_stick.features import compute_color_histograms
+# from sensor_stick.features import compute_normal_histograms
+
+from features import compute_color_histograms
+from features import compute_normal_histograms
+
 from sensor_stick.srv import GetNormals
 from geometry_msgs.msg import Pose
 from sensor_msgs.msg import PointCloud2
@@ -24,13 +28,14 @@ if __name__ == '__main__':
     rospy.init_node('capture_node')
 
     models = [\
-       'beer',
-       'bowl',
-       'create',
-       'disk_part',
-       'hammer',
-       'plastic_cup',
-       'soda_can']
+       'sticky_notes',
+       'book',
+       'snacks',
+       'biscuits',
+       'eraser',
+       'soap',
+       'soap2',
+       'glue']
 
     # Disable gravity and delete the ground plane
     initial_setup()
@@ -39,7 +44,7 @@ if __name__ == '__main__':
     for model_name in models:
         spawn_model(model_name)
 
-        for i in range(10):
+        for i in range(20):
             # make five attempts to get a valid a point cloud then give up
             sample_was_good = False
             try_count = 0
