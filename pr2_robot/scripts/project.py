@@ -33,19 +33,20 @@ def get_normals(cloud):
 # Helper function to create a yaml friendly dictionary from ROS messages
 def make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose):
     yaml_dict = {}
-    yaml_dict["test_scene_num"] = test_scene_num.data
-    yaml_dict["arm_name"]  = arm_name.data
-    yaml_dict["object_name"] = object_name.data
-    yaml_dict["pick_pose"] = message_converter.convert_ros_message_to_dictionary(pick_pose)
-    yaml_dict["place_pose"] = message_converter.convert_ros_message_to_dictionary(place_pose)
+    yaml_dict["test_scene_num"] = str(test_scene_num.data)
+    yaml_dict["arm_name"]  = str(arm_name.data)
+    yaml_dict["object_name"] = str(object_name.data)
+    yaml_dict["pick_pose"] = str(message_converter.convert_ros_message_to_dictionary(pick_pose))
+    yaml_dict["place_pose"] = str(message_converter.convert_ros_message_to_dictionary(place_pose))
     return yaml_dict
 
 # Helper function to output to yaml file
 def send_to_yaml(yaml_filename, dict_list):
     data_dict = {"object_list": dict_list}
+    rospy.loginfo("Dict to yaml: {}".format(yaml.dump(data_dict)))
     with open(yaml_filename, 'w') as outfile:
         yaml.dump(data_dict, outfile, default_flow_style=False)
-
+        
 # Callback function for your Point Cloud Subscriber
 def pcl_callback(pcl_msg):
 
@@ -204,7 +205,7 @@ def pcl_callback(pcl_msg):
     # Could add some logic to determine whether or not your object detections are robust
     # before calling pr2_mover()
     try:
-        pr2_mover(detected_objects_list)
+        pr2_mover(detected_objects)
     except rospy.ROSInterruptException:
         pass
 
@@ -212,7 +213,7 @@ def pcl_callback(pcl_msg):
 def pr2_mover(object_list):
 
     # TODO: Initialize variables
-
+    
     # TODO: Get/Read parameters
 
     # TODO: Parse parameters into individual variables
