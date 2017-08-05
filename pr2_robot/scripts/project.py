@@ -55,7 +55,16 @@ def pcl_callback(pcl_msg):
     pcl_data = ros_to_pcl(pcl_msg)
 
     # TODO: Statistical Outlier Filtering
-    
+    # creating a filter object
+   # outlier_filter = pcl_data.make_statistical_outlier_filter()
+    #Set the number of neighboring points to analyze for any given point
+   # outlier_filter.set_mean_k(50)
+    #Set threshold scale factor
+   # x = 1.0
+    #Any point with a mean distance larger than global (mean distance+x*std_dev) will be considered outlier
+   # outlier_filter.set_std_dev_mul_thresh(x)
+    #then call the filter for it to work on the cloud_filtered
+   # pcl_data = outlier_filter.filter()
 
     # TODO: Voxel Grid Downsampling
     vox = pcl_data.make_voxel_grid_filter()
@@ -72,8 +81,8 @@ def pcl_callback(pcl_msg):
     
     filter_axis_z = 'z'
     passthrough_z.set_filter_field_name(filter_axis_z)
-    axis_min = 0.60
-    axis_max = 0.9
+    axis_min = 0.77
+    axis_max = 1.1
     passthrough_z.set_filter_limits(axis_min, axis_max)
 
     cloud_filtered = passthrough_z.filter()
