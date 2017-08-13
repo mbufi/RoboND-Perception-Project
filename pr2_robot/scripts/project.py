@@ -84,9 +84,7 @@ def pcl_callback(pcl_msg):
     
     filter_axis_z = 'z'
     passthrough_z.set_filter_field_name(filter_axis_z)
-    axis_min = 0.6
-    axis_max = 0.9
-    passthrough_z.set_filter_limits(axis_min, axis_max)
+    passthrough_z.set_filter_limits(0.6, 1.2)
 
     cloud_passthrough = passthrough_z.filter()
 
@@ -95,9 +93,7 @@ def pcl_callback(pcl_msg):
 
     filter_axis_y = 'y'
     passthrough_y.set_filter_field_name(filter_axis_y)
-    axis_min_2 = -0.425
-    axis_max_2 = 0.425
-    passthrough_y.set_filter_limits(axis_min_2, axis_max_2)
+    passthrough_y.set_filter_limits(-0.5, 0.5)
 
     cloud_passthrough = passthrough_y.filter()
 
