@@ -84,7 +84,7 @@ def pcl_callback(pcl_msg):
     
     filter_axis_z = 'z'
     passthrough_z.set_filter_field_name(filter_axis_z)
-    passthrough_z.set_filter_limits(0.6, 1.2)
+    passthrough_z.set_filter_limits(0.6, 1.3)
 
     cloud_passthrough = passthrough_z.filter()
 
@@ -99,7 +99,7 @@ def pcl_callback(pcl_msg):
 
 
     # TODO: RANSAC Plane Segmentation
-    max_distance = 0.005
+    max_distance = 0.01
 
     seg = cloud_passthrough.make_segmenter()
 
@@ -124,9 +124,9 @@ def pcl_callback(pcl_msg):
     ec = white_cloud.make_EuclideanClusterExtraction()
     # Set tolerances for distance threshold 
     # as well as minimum and maximum cluster size (in points)
-    ec.set_ClusterTolerance(0.01)
-    ec.set_MinClusterSize(200)
-    ec.set_MaxClusterSize(3500)
+    ec.set_ClusterTolerance(0.015)
+    ec.set_MinClusterSize(20)
+    ec.set_MaxClusterSize(3000)
 
     # Search the k-d tree for clusters
     ec.set_SearchMethod(tree)
