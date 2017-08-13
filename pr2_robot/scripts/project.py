@@ -124,9 +124,10 @@ def pcl_callback(pcl_msg):
     ec = white_cloud.make_EuclideanClusterExtraction()
     # Set tolerances for distance threshold 
     # as well as minimum and maximum cluster size (in points)
-    ec.set_ClusterTolerance(0.010)
-    ec.set_MinClusterSize(20)
+    ec.set_ClusterTolerance(0.01)
+    ec.set_MinClusterSize(200)
     ec.set_MaxClusterSize(3500)
+
     # Search the k-d tree for clusters
     ec.set_SearchMethod(tree)
     # Extract indices for each of the discovered clusters
