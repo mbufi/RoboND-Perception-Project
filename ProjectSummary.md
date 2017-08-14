@@ -188,7 +188,94 @@ The main loop then iterates over all the items that need to be collected (determ
 The code then checks through the objects that has been detected to see if the correct one does exist, and updates it `pick_pose.positon` with the correct values provided by the centroid of the object. It will then check if the ground specified was red or green, and then sets the correct `arm_name`.
 
 Finally, the `test_scene_number` is specified and the dictionary is created. This is used to make the final output yaml file. 
+```python
+# function to load parameters and request PickPlace service
+def pr2_mover(object_list):
 
+    # TODO: Initialize variables
+    dict_list = []
+    centroids = [] # to be list of tuples (x, y, z)
+
+    # TODO: Get/Read parameters
+    object_list_param = rospy.get_param('/object_list')
+    dropbox_param = rospy.get_param('/dropbox')
+
+    # TODO: Parse parameters into individual variables
+    dict_dropbox = {}
+    for p in dropbox_param:
+        dict_dropbox[p['name']] = p['position']
+
+    # TODO: Rotate PR2 in place to capture side tables for the collision map
+    #Work in progress..
+    
+    # TODO: Loop through the pick list
+    for obj in object_list_param:
+        
+
+        # TODO: Get the PointCloud for a given object and obtain it's centroid
+        object_name = String()
+        object_name.data = obj['name']
+
+        #set default value of pick_pose in case the object can't be found
+        pick_pose = Pose()
+        pick_pose.position.x = 0
+        pick_pose.position.y = 0
+        pick_pose.position.z = 0
+
+        #set orientation to 0
+        pick_pose.orientation.x = 0
+        pick_pose.orientation.y = 0
+        pick_pose.orientation.z = 0
+        pick_pose.orientation.w = 0
+
+        #set place pose orientation to 0
+        place_pose = Pose()
+        place_pose.orientation.x = 0
+        place_pose.orientation.y = 0
+        place_pose.orientation.z = 0
+        place_pose.orientation.w = 0
+
+        #print(object_name)
+        for detected_object in object_list:
+            if detected_object.label == object_name.data:
+
+                # TODO: Create 'place_pose' for the object
+                points_arr = ros_to_pcl(detected_object.cloud).to_array()
+                pick_pose_np = np.mean(points_arr, axis=0)[:3]
+                pick_pose.position.x = np.asscalar(pick_pose_np[0])
+                pick_pose.position.y = np.asscalar(pick_pose_np[1])
+                pick_pose.position.z = np.asscalar(pick_pose_np[2])
+                
+                break
+
+
+        # TODO: Assign the arm to be used for pick_place
+        arm_name = String()
+        if obj['group'] == 'red':
+            arm_name.data = 'left'
+        elif obj['group'] == 'green':
+            arm_name.data = 'right'
+        else:
+            print "ERROR"
+
+
+        # TODO: Create a list of dictionaries (made with make_yaml_dict()) for later output to yaml format
+        test_scene_num = Int32()
+        test_scene_num.data = 3 ## CHANGE THIS for every scene to label a new output yaml
+
+        place_pose.position.x = dict_dropbox[arm_name.data][0]
+        place_pose.position.y = dict_dropbox[arm_name.data][1]
+        place_pose.position.z = dict_dropbox[arm_name.data][2]
+        dict_list.append(make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose))
+
+        # Wait for 'pick_place_routine' service to come up
+        rospy.wait_for_service('pick_place_routine')
+
+    # TODO: Output your request parameters into output yaml file
+    yaml_filename = "output_" + str(test_scene_num.data) + ".yaml"
+
+    send_to_yaml(yaml_filename, dict_list)
+```
 
 
 ## Final Results
