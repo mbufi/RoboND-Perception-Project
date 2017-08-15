@@ -254,15 +254,15 @@ def pr2_mover(object_list):
 
 All final output .yaml files can be seen in the repo. 
 
-####World 1 scored 100% (3/3)
+#### World 1 scored 100% (3/3)
 ![alt text][image2]
 
 
-####World 2 scored 100% (5/5)
+#### World 2 scored 100% (5/5)
 ![alt text][image3]
 
 
-####World 3 scored 100% (8/8)
+#### World 3 scored 100% (8/8)
 ![alt text][image4]
 
 ## Conclusion
