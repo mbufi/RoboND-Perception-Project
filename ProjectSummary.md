@@ -5,17 +5,12 @@
 
 [//]: # "Image References"
 
-[image1a]: ./output/grid.PNG
-[image1b]: ./output/warpedGrid.PNG
-[image2a]: ./output/colorThresh.PNG
-[image3]: ./output/completedThresh.PNG
-[image4a]: ./output/MaptoWorld.PNG
-[image4b]: ./output/rotationAndTranslation.PNG
-[image4c]: ./output/rotationMatrix.PNG
-[image5]: ./output/completeAutoRun.PNG
-[video1]: ./output/test_mapping.MP4
+[image1]: ./images/ModelAccuracy.JPG
+[image2]: ./images/world1.JPG
+[image3]: ./images/world2.JPG
+[image4]: ./images/world3.JPG
 
-![alt text][image2a]
+
 ### Required Steps for a Passing Submission:
 1. Extract features and train an SVM model on new objects (see `pick_list_*.yaml` in `/pr2_robot/config/` for the list of models you'll be trying to identify). 
 2. Write a ROS node and subscribe to `/pr2/world/points` topic. This topic contains noisy point cloud data that you must work with.
@@ -171,7 +166,7 @@ Next step was to train my model. When starting, using 20 images of each item pro
 The last step was to grab the pretrained SVM model inside the perception pipeline to identify the individual object clusters that were detected during the clustering step. This model labels each cluster, and then I publish these labels into RViz with their name to check if the model is correct in classifying everything. 
 
 See below for the results.
-
+![alt text][image1]
 
 
 
@@ -282,9 +277,16 @@ def pr2_mover(object_list):
 
 All final output .yaml files can be seen in the repo. 
 
-World 1 scored 100% (4/4)
-World 2 scored 
-World 3 scored 
+####World 1 scored 100% (3/3)
+![alt text][image2]
+
+
+####World 2 scored 100% (5/5)
+![alt text][image3]
+
+
+####World 3 scored 100% (8/8)
+![alt text][image4]
 
 ## Conclusion
 Overall, my perception pipeline worked pretty well. I know it could be more accurrate with more training samples and tighter tolerances with my parameters...perhaps I will experiment with this later. 
